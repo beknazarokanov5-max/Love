@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Для тебя 💖</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="sky"></canvas>
+
+<div id="inputBox">
+    <h2>🌙 Введи имя своей Валентинки</h2>
+    <input type="text" id="nameInput" placeholder="Имя">
+    <button onclick="startShow()">💖 Показать магию</button>
+</div>
+
+<div id="nameDisplay"></div>
+
+<div id="questionBox" style="display:none;">
+    <h2 id="questionText">Будешь моей Валентинкой? 💌</h2>
+    <div id="buttonContainer">
+        <button id="yesBtn">Да 💖</button>
+        <button id="noBtn">Нет 😅</button>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("sky");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener("resize", () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+// ===== ЗВЁЗДЫ =====
+let stars = [];
+for (let i = 0; i < 400; i++) {
+    stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2, opacity: Math.random()});
+}
+
+// ===== МЯГКИЙ ЗВЕЗДОПАД =====
+let meteors = [];
+function createMeteor(){
+    meteors.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height/2, speed: 4+Math.random()*3, life:100});
+}
+setInterval(createMeteor, 2500);
+
+// ===== САЛЮТ =====
+let fireworks = [];
+function createFirework(){
+    let x=Math.random()*canvas.width;
+    let y=Math.random()*canvas.height/2;
+    for(let i=0;i<80;i++){
+        let angle=Math.random()*2*Math.PI;
+        let speed=Math.random()*6;
+        fireworks.push({x:x, y:y, vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed, life:100, color:"hsl("+Math.random()*360+",100%,60%)", heart:Math.random()<0.2});
+    }
+}
+
+// ===== АНИМАЦИЯ =====
+function animate(){
+    ctx.fillStyle = "rgba(5,5,25,0.4)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    stars.forEach(star=>{
+        ctx.globalAlpha = star.opacity;
+        ctx.fillStyle="white";
+        ctx.fillRect(star.x, star.y, star.size, star.size);
+        star.opacity += (Math.random()-0.5)*0.03;
+        if(star.opacity<0.2) star.opacity=0.2;
+        if(star.opacity>1) star.opacity=1;
+    });
+    ctx.globalAlpha=1;
+
+    meteors.forEach((m,i)=>{
+        ctx.globalAlpha=m.life/100;
+        ctx.beginPath();
+        ctx.arc(m.x,m.y,3,0,Math.PI*2);
+        ctx.fillStyle="white";
+        ctx.fill();
+        ctx.globalAlpha=1;
+        m.x-=m.speed; m.y+=m.speed; m.life--;
+        if(m.life<=0) meteors.splice(i,1);
+    });
+
+    fireworks.forEach((f,i)=>{
+        ctx.fillStyle=f.color;
+        ctx.globalAlpha=f.life/100;
+        if(f.heart){ctx.font="16px Arial"; ctx.fillText("💖", f.x, f.y);} 
+        else{ctx.beginPath(); ctx.arc(f.x,f.y,2,0,Math.PI*2); ctx.fill();}
+        ctx.globalAlpha=1;
+        f.x+=f.vx; f.y+=f.vy; f.vy+=0.02; f.life--;
+        if(f.life<=0) fireworks.splice(i,1);
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+
+// ===== ДОЖДЬ СЕРДЕЦ =====
+function heartRain(){
+    const heart=document.createElement("div");
+    heart.className="heartRain";
+    heart.innerHTML="💖";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(15+Math.random()*25)+"px";
+    heart.style.animationDuration=(3+Math.random()*3)+"s";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),6000);
+}
+
+// ===== МАЛЕНЬКИЕ ИМЕНА =====
+function floatingNames(name){
+    const smallName=document.createElement("div");
+    smallName.className="floatingName";
+    smallName.innerHTML=name;
+    smallName.style.left=Math.random()*100+"vw";
+    smallName.style.top=Math.random()*100+"vh";
+    smallName.style.fontSize=(15+Math.random()*20)+"px";
+    document.body.appendChild(smallName);
+    setTimeout(()=>smallName.remove(),8000);
+}
+
+// ===== ДОЖДЬ ЛЮБОВНЫХ ФРАЗ =====
+function loveTextRain(){
+    const phrases=["Я люблю тебя ❤️","Будь моей девушкой 💖"];
+    const text=document.createElement("div");
+    text.className="loveText";
+    text.innerHTML=phrases[Math.floor(Math.random()*phrases.length)];
+    text.style.left=Math.random()*100+"vw";
+    text.style.fontSize=(16+Math.random()*20)+"px";
+    text.style.animationDuration=(4+Math.random()*3)+"s";
+    document.body.appendChild(text);
+    setTimeout(()=>text.remove(),8000);
+}
+
+// ===== ЗАПУСК ПО ВВОДУ ИМЕНИ =====
+function startShow(){
+    let name=document.getElementById("nameInput").value;
+    if(name.trim()==="") return;
+    document.getElementById("inputBox").style.display="none";
+    const display=document.getElementById("nameDisplay");
+    display.innerHTML=name+" 💖";
+    display.style.display="block";
+
+    setInterval(createFirework,1800);
+    setInterval(heartRain,300);
+    setInterval(()=>floatingNames(name),700);
+    setInterval(loveTextRain,800);
+
+    setTimeout(()=>{document.getElementById("questionBox").style.display="block";},3000);
+
+    const yesBtn=document.getElementById("yesBtn");
+    const noBtn=document.getElementById("noBtn");
+
+    yesBtn.onclick=()=>{
+        for(let i=0;i<5;i++) setTimeout(createFirework,i*400);
+        for(let i=0;i<50;i++) setTimeout(heartRain,i*200);
+        yesBtn.disabled=true;
+        noBtn.disabled=true;
+        yesBtn.innerHTML="Ура! 💖";
+        noBtn.style.display="none";
+    };
+
+    // Наведение на "Нет" — превращается в "Да"
+    noBtn.addEventListener("mouseenter",()=>{noBtn.innerHTML="Да 💖";});
+    // Клик по "Нет" — срабатывает как "Да"
+    noBtn.onclick=()=>{yesBtn.click();};
+}
+</script>
+
+</body>
+</html>
