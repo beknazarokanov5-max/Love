@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Для тебя 💖</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -21,7 +22,7 @@
     <h2 id="questionText">Будешь моей Валентинкой? 💌</h2>
     <div id="buttonContainer">
         <button id="yesBtn">Да 💖</button>
-        <button id="noBtn">Нет 😅</button>
+        <button id="noBtn">Да 😅</button>
     </div>
 </div>
 
@@ -35,20 +36,17 @@ window.addEventListener("resize", () => {
     canvas.height = window.innerHeight;
 });
 
-// ===== ЗВЁЗДЫ =====
 let stars = [];
 for (let i = 0; i < 400; i++) {
     stars.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2, opacity: Math.random()});
 }
 
-// ===== МЯГКИЙ ЗВЕЗДОПАД =====
 let meteors = [];
 function createMeteor(){
     meteors.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height/2, speed: 4+Math.random()*3, life:100});
 }
 setInterval(createMeteor, 2500);
 
-// ===== САЛЮТ =====
 let fireworks = [];
 function createFirework(){
     let x=Math.random()*canvas.width;
@@ -60,7 +58,6 @@ function createFirework(){
     }
 }
 
-// ===== АНИМАЦИЯ =====
 function animate(){
     ctx.fillStyle = "rgba(5,5,25,0.4)";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -100,7 +97,6 @@ function animate(){
 }
 animate();
 
-// ===== ДОЖДЬ СЕРДЕЦ =====
 function heartRain(){
     const heart=document.createElement("div");
     heart.className="heartRain";
@@ -112,7 +108,6 @@ function heartRain(){
     setTimeout(()=>heart.remove(),6000);
 }
 
-// ===== МАЛЕНЬКИЕ ИМЕНА =====
 function floatingNames(name){
     const smallName=document.createElement("div");
     smallName.className="floatingName";
@@ -124,7 +119,6 @@ function floatingNames(name){
     setTimeout(()=>smallName.remove(),8000);
 }
 
-// ===== ДОЖДЬ ЛЮБОВНЫХ ФРАЗ =====
 function loveTextRain(){
     const phrases=["Я люблю тебя ❤️","Будь моей девушкой 💖"];
     const text=document.createElement("div");
@@ -137,7 +131,6 @@ function loveTextRain(){
     setTimeout(()=>text.remove(),8000);
 }
 
-// ===== ЗАПУСК ПО ВВОДУ ИМЕНИ =====
 function startShow(){
     let name=document.getElementById("nameInput").value;
     if(name.trim()==="") return;
@@ -164,13 +157,12 @@ function startShow(){
         yesBtn.innerHTML="Ура! 💖";
         noBtn.style.display="none";
     };
-
-    // Наведение на "Нет" — превращается в "Да"
+    
     noBtn.addEventListener("mouseenter",()=>{noBtn.innerHTML="Да 💖";});
-    // Клик по "Нет" — срабатывает как "Да"
     noBtn.onclick=()=>{yesBtn.click();};
 }
 </script>
 
 </body>
 </html>
+
